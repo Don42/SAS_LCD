@@ -110,6 +110,19 @@ BEGIN  -- synth
     END IF;
   END PROCESS enable_count;
 
+  Decode : PROCESS(clk1kHz)
+    VARIABLE second : integer RANGE 0 to 59;
+    VARIABLE minute : integer RANGE 0 to 59;
+    VARIABLE hour   : integer RANGE 0 to 23;
+    VARIABLE day    : integer RANGE 1 to 31;
+    VARIABLE weekday: integer RANGE 1 to 7;
+    VARIABLE month  : integer RANGE 1 to 12;
+    VARIABLE year   : integer RANGE 0 to 99;
 
+  BEGIN
+    IF(rising_edge(clk1kHz)) THEN
+        
+    END IF;
+  END PROCESS;
 
 END synth;
