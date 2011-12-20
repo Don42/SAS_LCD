@@ -129,6 +129,36 @@ BEGIN
 		END IF;
 	END PROCESS enable_count;
 
-	
+    Decode_Second   : PROCESS (s)
+    BEGIN
+    END PROCESS;
+
+    Decode_Minute   : PROCESS (mi)
+    BEGIN
+    END PROCESS;
+
+    Decode_Hour     : PROCESS (h)
+    BEGIN
+    END PROCESS;
+
+    Decode_Offset   : PROCESS (MESZ)
+    BEGIN
+    END PROCESS;
+
+    Decode_Day      : PROCESS (d)
+    BEGIN
+    END PROCESS;
+
+    Decode_Weekday  : PROCESS (dn)
+    BEGIN
+    END PROCESS;
+
+    Decode_Month    : PROCESS ( mo)
+    BEGIN
+    END PROCESS;
+
+    Decode_Year     : PROCESS (y)
+    BEGIN
+    END PROCESS;
 	
 END synth;
