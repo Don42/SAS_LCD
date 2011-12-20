@@ -1,7 +1,7 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 --USE ieee.std_logic_unsigned.ALL;
-
+USE ieee.numeric_std.ALL;
 
 ENTITY dcf77LCD IS
 	PORT (
@@ -63,7 +63,7 @@ ARCHITECTURE synth OF dcf77LCD IS
 	
     SIGNAL LCD_String_1 : string(1 TO 20) := "   xxxx-xx-xx  xx   ";			-- String für die erste Zeile des LCDs
 	SIGNAL LCD_String_2 : string(1 TO 20) := "   xx:xx:xx UTC+x   ";			-- String für die zweite Zeile des LCDs
-  
+
 BEGIN  
 
 	Main : PROCESS(clk1kHz, resn)
@@ -146,19 +146,120 @@ BEGIN
     END PROCESS;
 
     Decode_Day      : PROCESS (d)
+    VARIABLE day : integer RANGE 0 to 31 := 0;
     BEGIN
+        --Calculate the current day by adding bit values
+        IF d(0)='1' THEN
+            day := day + 1;
+        END IF;
+        IF d(1)='1' THEN
+            day := day + 2;
+        END IF;
+        IF d(2)='1' THEN
+            day := day + 4;
+        END IF;
+        IF d(3)='1' THEN
+            day := day + 8;
+        END IF;
+        IF d(4)='1' THEN
+            day := day + 10;
+        END IF;
+        IF d(5)='1' THEN
+            day := day + 20;
+        END IF;
+        
+        --Write calculated day to output string
+        IF day >= 10 THEN
+            LCD_String_1(12 to 13) <= integer'image(day);
+        ELSE
+            LCD_String_1(12 to 13) <= '0' & integer'image(day);
+        END IF;
     END PROCESS;
 
     Decode_Weekday  : PROCESS (dn)
+    VARIABLE weekday    : std_logic_vector (2 downto 0) := dn;
     BEGIN
+        CASE weekday IS
+            --Monday
+            WHEN "001" => LCD_String_1(16 to 17) <= "Mo";
+            --Tuesday
+            WHEN "010" => LCD_String_1(16 to 17) <= "Tu";
+            --Wednesday
+            WHEN "011" => LCD_String_1(16 to 17) <= "We";
+            --Thursday
+            WHEN "100" => LCD_String_1(16 to 17) <= "Th";
+            --Friday
+            WHEN "101" => LCD_String_1(16 to 17) <= "Fr";
+            --Saturday
+            WHEN "110" => LCD_String_1(16 to 17) <= "Sa";
+            --Sunday
+            WHEN "111" => LCD_String_1(16 to 17) <= "Su";
+            --Error
+            WHEN OTHERS => LCD_String_1(16 to 17) <= "??";
+        END CASE;
     END PROCESS;
 
-    Decode_Month    : PROCESS ( mo)
+    Decode_Month    : PROCESS (mo)
+    VARIABLE month : integer RANGE 1 to 12 := 1;
     BEGIN
+        --Calculate the current month by adding bit values
+        IF mo(1)='1' THEN
+            month := month + 2;
+        END IF;
+        IF mo(2)='1' THEN
+            month := month + 4;
+        END IF;
+        IF mo(3)='1' THEN
+            month := month + 8;
+        END IF;
+        IF mo(4)='1' THEN
+            month := month + 10;
+        END IF;
+        
+        --Write calculated month to output string
+        IF month >= 10 THEN
+            LCD_String_1(9 to 10) <= integer'image(month);
+        ELSE
+            LCD_String_1(9 to 10) <= '0' & integer'image(month);
+        END IF;
+
     END PROCESS;
 
     Decode_Year     : PROCESS (y)
+    VARIABLE year : integer RANGE 0 to 99  := 0;
     BEGIN
+        --Calculate the current year by adding bit values
+        IF y(0)='1' THEN
+            year := year + 1;
+        END IF;
+        IF y(1)='1' THEN
+            year := year + 2;
+        END IF;
+        IF y(2)='1' THEN
+            year := year + 4;
+        END IF;
+        IF y(3)='1' THEN
+            year := year + 8;
+        END IF;
+        IF y(4)='1' THEN
+            year := year + 10;
+        END IF;
+        IF y(5)='1' THEN
+            year := year + 20;
+        END IF;
+        IF y(6)='1' THEN
+            year := year + 40;
+        END IF;
+        IF y(7)='1' THEN
+            year := year + 80;
+        END IF;
+        
+        --Write calculated year to output string
+        IF year >= 10 THEN
+            LCD_String_1(4 to 7) <= "20" & integer'image(year);
+        ELSE
+            LCD_String_1(4 to 7) <= "20" & '0' & integer'image(year);
+        END IF;
     END PROCESS;
 	
 END synth;

@@ -57,10 +57,10 @@ architecture testbench of tb_dcf77LCD is
   signal sig_second : std_logic_vector(7 downto 0) := "01011001";
   signal sig_minute : std_logic_vector(6 downto 0) := "0000000";
   signal sig_hour   : std_logic_vector(5 downto 0) := "000000";
-  signal sig_day    : std_logic_vector(5 downto 0) := "000000";
-  signal sig_weekday: std_logic_vector(2 downto 0) := "000";
-  signal sig_month  : std_logic_vector(4 downto 0) := "00000";
-  signal sig_year   : std_logic_vector(7 downto 0) := "00000000";
+  signal sig_day    : std_logic_vector(5 downto 0) := "010010";
+  signal sig_weekday: std_logic_vector(2 downto 0) := "101";
+  signal sig_month  : std_logic_vector(4 downto 0) := "10001";
+  signal sig_year   : std_logic_vector(7 downto 0) := "01000010";
 
   signal sig_lcd_data       : std_logic_vector(7 downto 0);
   signal sig_lcd_enable     : std_logic;
