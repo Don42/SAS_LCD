@@ -163,7 +163,13 @@ BEGIN
 	END PROCESS enable_count;
 
     Decode_Second   : PROCESS (s)
-    BEGIN
+        VARIABLE one    : integer RANGE 0 to 9 := 0;
+        VARIABLE ten    : integer RANGE 0 to 9 := 0;
+	BEGIN
+        ten := to_integer(unsigned(s(7 downto 4)));
+        one := to_integer(unsigned(s(3 downto 0)));
+
+        LCD_String_2(10 to 11) <= integer'image(ten) & integer'image(one);
     END PROCESS;
 
     Decode_Minute   : PROCESS (mi)
