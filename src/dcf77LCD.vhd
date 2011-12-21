@@ -53,9 +53,42 @@ ARCHITECTURE synth OF dcf77LCD IS
 			WHEN 'r' => RETURN x"72";
 			WHEN 'S' => RETURN x"53";
 			WHEN 'a' => RETURN x"61";
+			WHEN 'x' => RETURN x"78";
+			WHEN 'U' => RETURN x"55";
+			WHEN 'C' => RETURN x"43";
+			WHEN '+' => RETURN x"2B";
 			WHEN OTHERS => RETURN x"3F";      -- ?
 		END CASE;
 	END CharToStd;
+	
+	FUNCTION DCF77ToString (letter : std_logic_vector) RETURN string IS
+        VARIABLE count : integer RANGE 0 TO 99 := 0;
+        VARIABLE weight: integer RANGE 0 TO 80 := 0;
+        VARIABLE length: integer RANGE 0 to 7 := letter'length-1;
+	BEGIN
+		For i IN 0 TO length LOOP
+			CASE i IS
+				WHEN 0 => weight := 1;
+				WHEN 1 => weight := 2;
+				WHEN 2 => weight := 4;
+				WHEN 3 => weight := 8;
+				WHEN 4 => weight := 10;
+				WHEN 5 => weight := 20;
+				WHEN 6 => weight := 40;
+				WHEN 7 => weight := 80;
+            END CASE;
+			
+			if(letter(i) = '1') THEN
+				count := count + weight;
+			END IF;
+		END LOOP;
+
+		IF (count>=10) THEN
+		    RETURN integer'image(count);
+        ELSE
+            RETURN '0' & integer'image(count);
+        END IF;
+	END DCF77ToString;
 
 	-- Deklaration der Variablen, Konstanten und Signale
 	CONSTANT MUXMax     : integer := 3;
@@ -134,15 +167,25 @@ BEGIN
     END PROCESS;
 
     Decode_Minute   : PROCESS (mi)
+    VARIABLE minute : std_logic_vector(6 downto 0) := mi;
     BEGIN
+		LCD_String_2(7 TO 8) <= DCF77ToString(minute);
     END PROCESS;
 
+
     Decode_Hour     : PROCESS (h)
+    VARIABLE hour   : std_logic_vector(5 downto 0) := h;
     BEGIN
+		LCD_String_2(4 TO 5) <= DCF77ToString(hour);
     END PROCESS;
 
     Decode_Offset   : PROCESS (MESZ)
     BEGIN
+		IF(MESZ = '0') THEN
+			LCD_String_2(17) <= '1';
+		ELSE
+			LCD_String_2(17) <= '2';
+		END IF;
     END PROCESS;
 
     Decode_Day      : PROCESS (d)
