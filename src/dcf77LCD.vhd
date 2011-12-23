@@ -76,7 +76,7 @@ ARCHITECTURE synth OF dcf77LCD IS
 				WHEN 5 => weight := 20;
 				WHEN 6 => weight := 40;
 				WHEN 7 => weight := 80;
-                WHEN others => wheight := 0;
+                WHEN others => weight := 0;
             END CASE;
 			
 			if(letter(i) = '1') THEN
@@ -95,7 +95,7 @@ ARCHITECTURE synth OF dcf77LCD IS
 	CONSTANT MUXMax     : integer := 3;
 	SIGNAL   MUXCounter : integer RANGE 0 TO MUXMax;  							-- LCD enable and LCD data
 	
-    SIGNAL LCD_String_1 : string(1 TO 20) := "   xxxx-xx-xx  xx   ";			-- String für die erste Zeile des LCDs
+    SIGNAL LCD_String_1 : string(1 TO 20) := "   20xx-xx-xx  xx   ";			-- String für die erste Zeile des LCDs
 	SIGNAL LCD_String_2 : string(1 TO 20) := "   xx:xx:xx UTC+x   ";			-- String für die zweite Zeile des LCDs
 
 BEGIN  
@@ -174,17 +174,15 @@ BEGIN
     END PROCESS;
 
     Decode_Minute   : PROCESS (mi)
-    VARIABLE minute : std_logic_vector(6 downto 0) := 0;
+    VARIABLE minute : std_logic_vector(6 downto 0) := mi;
     BEGIN
-        minute := mi;
 		LCD_String_2(7 TO 8) <= DCF77ToString(minute);
     END PROCESS;
 
 
     Decode_Hour     : PROCESS (h)
-    VARIABLE hour   : std_logic_vector(5 downto 0) := 0;
+    VARIABLE hour   : std_logic_vector(5 downto 0) := h;
     BEGIN
-        hour := h;
 		LCD_String_2(4 TO 5) <= DCF77ToString(hour);
     END PROCESS;
 
@@ -198,40 +196,14 @@ BEGIN
     END PROCESS;
 
     Decode_Day      : PROCESS (d)
-    VARIABLE day : integer RANGE 0 to 31 := 0;
+    VARIABLE day : std_logic_vector(5 downto 0) := d;
     BEGIN
-        --Calculate the current day by adding bit values
-        IF d(0)='1' THEN
-            day := day + 1;
-        END IF;
-        IF d(1)='1' THEN
-            day := day + 2;
-        END IF;
-        IF d(2)='1' THEN
-            day := day + 4;
-        END IF;
-        IF d(3)='1' THEN
-            day := day + 8;
-        END IF;
-        IF d(4)='1' THEN
-            day := day + 10;
-        END IF;
-        IF d(5)='1' THEN
-            day := day + 20;
-        END IF;
-        
-        --Write calculated day to output string
-        IF day >= 10 THEN
-            LCD_String_1(12 to 13) <= integer'image(day);
-        ELSE
-            LCD_String_1(12 to 13) <= '0' & integer'image(day);
-        END IF;
+        LCD_String_1(12 to 13) <= DCF77ToString(day);
     END PROCESS;
 
     Decode_Weekday  : PROCESS (dn)
-    VARIABLE weekday    : std_logic_vector (2 downto 0) := 0;
+    VARIABLE weekday    : std_logic_vector (2 downto 0) := dn;
     BEGIN
-        weekday := dn;
         CASE weekday IS
             --Monday
             WHEN "001" => LCD_String_1(16 to 17) <= "Mo";
@@ -253,66 +225,16 @@ BEGIN
     END PROCESS;
 
     Decode_Month    : PROCESS (mo)
-    VARIABLE month : integer RANGE 1 to 12 := 1;
+    VARIABLE month : std_logic_vector(4 downto 0) := mo;
     BEGIN
-        --Calculate the current month by adding bit values
-        IF mo(1)='1' THEN
-            month := month + 2;
-        END IF;
-        IF mo(2)='1' THEN
-            month := month + 4;
-        END IF;
-        IF mo(3)='1' THEN
-            month := month + 8;
-        END IF;
-        IF mo(4)='1' THEN
-            month := month + 10;
-        END IF;
-        
-        --Write calculated month to output string
-        IF month >= 10 THEN
-            LCD_String_1(9 to 10) <= integer'image(month);
-        ELSE
-            LCD_String_1(9 to 10) <= '0' & integer'image(month);
-        END IF;
+        LCD_String_1(9 to 10) <= DCF77ToString(month);
 
     END PROCESS;
 
     Decode_Year     : PROCESS (y)
-    VARIABLE year : integer RANGE 0 to 99  := 0;
+    VARIABLE year : std_logic_vector(7 downto 0) := y;
     BEGIN
-        --Calculate the current year by adding bit values
-        IF y(0)='1' THEN
-            year := year + 1;
-        END IF;
-        IF y(1)='1' THEN
-            year := year + 2;
-        END IF;
-        IF y(2)='1' THEN
-            year := year + 4;
-        END IF;
-        IF y(3)='1' THEN
-            year := year + 8;
-        END IF;
-        IF y(4)='1' THEN
-            year := year + 10;
-        END IF;
-        IF y(5)='1' THEN
-            year := year + 20;
-        END IF;
-        IF y(6)='1' THEN
-            year := year + 40;
-        END IF;
-        IF y(7)='1' THEN
-            year := year + 80;
-        END IF;
-        
-        --Write calculated year to output string
-        IF year >= 10 THEN
-            LCD_String_1(4 to 7) <= "20" & integer'image(year);
-        ELSE
-            LCD_String_1(4 to 7) <= "20" & '0' & integer'image(year);
-        END IF;
+        LCD_String_1(6 to 7) <= DCF77ToString(year);
     END PROCESS;
 	
 END synth;
