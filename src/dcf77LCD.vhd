@@ -76,6 +76,7 @@ ARCHITECTURE synth OF dcf77LCD IS
 				WHEN 5 => weight := 20;
 				WHEN 6 => weight := 40;
 				WHEN 7 => weight := 80;
+                WHEN others => wheight := 0;
             END CASE;
 			
 			if(letter(i) = '1') THEN
@@ -173,15 +174,17 @@ BEGIN
     END PROCESS;
 
     Decode_Minute   : PROCESS (mi)
-    VARIABLE minute : std_logic_vector(6 downto 0) := mi;
+    VARIABLE minute : std_logic_vector(6 downto 0) := 0;
     BEGIN
+        minute := mi;
 		LCD_String_2(7 TO 8) <= DCF77ToString(minute);
     END PROCESS;
 
 
     Decode_Hour     : PROCESS (h)
-    VARIABLE hour   : std_logic_vector(5 downto 0) := h;
+    VARIABLE hour   : std_logic_vector(5 downto 0) := 0;
     BEGIN
+        hour := h;
 		LCD_String_2(4 TO 5) <= DCF77ToString(hour);
     END PROCESS;
 
@@ -226,8 +229,9 @@ BEGIN
     END PROCESS;
 
     Decode_Weekday  : PROCESS (dn)
-    VARIABLE weekday    : std_logic_vector (2 downto 0) := dn;
+    VARIABLE weekday    : std_logic_vector (2 downto 0) := 0;
     BEGIN
+        weekday := dn;
         CASE weekday IS
             --Monday
             WHEN "001" => LCD_String_1(16 to 17) <= "Mo";
