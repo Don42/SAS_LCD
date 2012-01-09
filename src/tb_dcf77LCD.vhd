@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 -- Title      : SAS dcf77 LCD Testbench
--- Project    : 
+-- Project    :
 -------------------------------------------------------------------------------
 -- File       : tb_dcf77LCD.vhd
 -- Author     : Marco Kaulea
 -- Created    : 2011-12-18
 -- Last update: 2011-12-18
 -------------------------------------------------------------------------------
--- Description: Simulate dcf77 receiver to test LCD Outputs 
+-- Description: Simulate dcf77 receiver to test LCD Outputs
 -------------------------------------------------------------------------------
 
 library ieee;
@@ -23,14 +23,14 @@ architecture testbench of tb_dcf77LCD is
   -- Define constants: duration of clk period
   constant clk_period_c : time    := 1 ms;
 
-  
-  -- Component declaration 
-  component dcf77LCD 
-    port 
+
+  -- Component declaration
+  component dcf77LCD
+    port
     (
       clk1kHz   : in  std_logic;
       resn      : in  std_logic;
-      MESZ      : in  std_logic;      
+      MESZ      : in  std_logic;
       s         : in  std_logic_vector(7 downto 0);
       mi        : in  std_logic_vector(6 downto 0);
       h         : in  std_logic_vector(5 downto 0);
@@ -39,7 +39,7 @@ architecture testbench of tb_dcf77LCD is
       mo        : in  std_logic_vector(4 downto 0);
       y         : in  std_logic_vector(7 downto 0);
 
-    
+
       --Outputs
       LCD_DATA  : out std_logic_vector(7 downto 0);
       LCD_ENABLE: out std_logic;
@@ -48,7 +48,7 @@ architecture testbench of tb_dcf77LCD is
     );
   end component;
 
-  
+
   -- Define the needed signals
   signal sig_clk    : std_logic := '0';
   signal sig_rst_n  : std_logic := '0';
@@ -68,17 +68,17 @@ architecture testbench of tb_dcf77LCD is
   signal sig_lcd_rw         : std_logic;
 
 
-  
+
 begin  -- testbench
 
   -- Instantiate  and connect the ports to testbench's signals
   lcd  : dcf77LCD
-    port map 
+    port map
     (
         clk1kHz => sig_clk,
         resn    => sig_rst_n,
         MESZ    => sig_mesz,
-        
+
         s   => sig_second,
         mi  => sig_minute,
         h   => sig_hour,
@@ -93,7 +93,7 @@ begin  -- testbench
         LCD_RW      => sig_lcd_rw
     );
 
-  -- Reset 
+  -- Reset
   sig_rst_n <= '1' after clk_period_c*2;
 
   -- purpose: Generate clock signal
@@ -110,7 +110,7 @@ begin  -- testbench
   -- purpose: Generate all possible inputs values and check the result
   -- type   : sequential
   -- inputs : clk, rst_n
-  -- outputs: term1_r, term2_r  
+  -- outputs: term1_r, term2_r
   input_gen : process (sig_clk, sig_rst_n)
   begin  -- process input_gen_output_check
     if sig_rst_n = '0' then                 -- asynchronous reset (active low)
@@ -125,6 +125,12 @@ begin  -- testbench
     elsif (sig_rst_n = '1') then
         sig_second <= "01011001";
 
+  sig_minute <= "1000100";
+  sig_hour   <= "001001";
+  sig_day    <= "010010";
+  sig_weekday<= "101";
+  sig_month  <= "10001";
+  sig_year   <= "01000010";
 
     end if;
   end process input_gen;
