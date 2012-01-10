@@ -124,13 +124,12 @@ begin  -- testbench
       sig_year      <= (others => '0');
     elsif (sig_rst_n = '1') then
         sig_second <= "01011001";
-
-  sig_minute <= "1000100";
-  sig_hour   <= "001001";
-  sig_day    <= "010010";
-  sig_weekday<= "101";
-  sig_month  <= "10001";
-  sig_year   <= "01000010";
+        sig_minute <= "1000100";
+        sig_hour   <= "001001";
+        sig_day    <= "010010";
+        sig_weekday<= "101";
+        sig_month  <= "10001";
+        sig_year   <= "01000010";
 
     end if;
   end process input_gen;
