@@ -85,7 +85,7 @@ ARCHITECTURE synth OF dcf77LCD IS
         VARIABLE count : integer RANGE 0 TO 99 := 0;
         VARIABLE length: integer RANGE 0 to 7 := 0;
     BEGIN
-      length := letter'length-1;
+      length := letter'length;
         IF length >=1 THEN
           IF(letter(0) ='1') THEN
             count := count + 1;
